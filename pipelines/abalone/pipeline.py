@@ -286,7 +286,7 @@ def get_pipeline(
         arguments=["--input-data", input_data],
     )
     step_process = ProcessingStep(
-        name="PreprocessStage-MG-Data",
+        name="Data-Preprocessing-Step-01",
         step_args=step_args,
     )
 
@@ -319,7 +319,7 @@ def get_pipeline(
     #Use the tf2_estimator in a Sagemaker pipelines ProcessingStep.
     #NOTE how the input to the training job directly references the output of the previous step.
     step_train = TrainingStep(
-    name="TrainModelf",
+    name="Model-Traning-Step-02",
     estimator=tf2_estimator,
     inputs={
         "train":
@@ -366,7 +366,7 @@ def get_pipeline(
 
     # Use the evaluate_model_processor in a Sagemaker pipelines ProcessingStep.
     step_eval = ProcessingStep(
-        name= "ModelEvaluationOnTestDataset",
+        name= "Model-Evaluation-Step-03",
         processor=evaluate_model_processor,
         inputs=[
             ProcessingInput(
@@ -426,7 +426,7 @@ def get_pipeline(
     )
 
     step_higher_mse_send_email_lambda = LambdaStep(
-        name="Send-Email-To-DS-Team",
+        name="Send-Email-To-NeuronTeam-Step-4.3",
         lambda_func=send_email_lambda_function,
         inputs={"evaluation_s3_uri": evaluation_s3_uri},
     )
@@ -447,7 +447,7 @@ def get_pipeline(
 
     # Register model step that will be conditionally executed
     step_register = RegisterModel(
-        name="RegisterModel",
+        name="Register-Model-Step-4.1",
         estimator=tf2_estimator,
         model_data=step_train.properties.ModelArtifacts.S3ModelArtifacts,
         content_types=["text/csv"],
@@ -473,7 +473,7 @@ def get_pipeline(
     )
 
     step_create_model = CreateModelStep(
-        name="Create-Model",
+        name="Create-Model-Step-4.2",
         model=model,
         inputs=sagemaker.inputs.CreateModelInput(instance_type="ml.m5.large"),
     )
@@ -503,7 +503,7 @@ def get_pipeline(
     )
 
     step_lower_mse_deploy_model_lambda = LambdaStep(
-        name="Deploy-Model-To-Endpoint",
+        name="Deploy-Model-To-Endpoint-Step-4.2.1",
         lambda_func=deploy_model_lambda_function,
             inputs={
             "model_name": step_create_model.properties.ModelName,
@@ -526,7 +526,7 @@ def get_pipeline(
         right=1.0,
     )
     step_cond = ConditionStep(
-        name="CheckAccuracy",
+        name="Check-Accuracy-If-Greater-Than-Given-Threshold-Step-04",
         conditions=[cond_lte],
         if_steps=[step_register, step_create_model, step_lower_mse_deploy_model_lambda],
         else_steps=[step_higher_mse_send_email_lambda],
