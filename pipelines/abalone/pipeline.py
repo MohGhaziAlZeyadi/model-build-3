@@ -319,7 +319,7 @@ def get_pipeline(
     #Use the tf2_estimator in a Sagemaker pipelines ProcessingStep.
     #NOTE how the input to the training job directly references the output of the previous step.
     step_train = TrainingStep(
-    name="TrainModel",
+    name="TrainModelf",
     estimator=tf2_estimator,
     inputs={
         "train":
@@ -366,7 +366,7 @@ def get_pipeline(
 
     # Use the evaluate_model_processor in a Sagemaker pipelines ProcessingStep.
     step_eval = ProcessingStep(
-        name= "Evaluate Model on (Test dataset)",
+        name= "ModelEvaluationOnTestDataset",
         processor=evaluate_model_processor,
         inputs=[
             ProcessingInput(
