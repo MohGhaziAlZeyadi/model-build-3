@@ -404,8 +404,7 @@ def get_pipeline(
     
     ########################################################
     #########Send E-Mail Lambda Step########################
-    ########################################################
-    
+    ########################################################    
     from iam_helper import create_s3_lambda_role
     
     lambda_role = create_s3_lambda_role("send-email-to-ds-team-lambda-role")
