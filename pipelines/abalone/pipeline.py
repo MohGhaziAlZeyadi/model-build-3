@@ -447,7 +447,7 @@ def get_pipeline(
 
     # Register model step that will be conditionally executed
     step_register = RegisterModel(
-        name="Register-Model-Step-4.1",
+        name="Register-Model-Step-4/1",
         estimator=tf2_estimator,
         model_data=step_train.properties.ModelArtifacts.S3ModelArtifacts,
         content_types=["text/csv"],
